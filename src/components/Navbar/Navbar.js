@@ -1,15 +1,15 @@
-import React from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import Button from "@material-ui/core/Button";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -19,14 +19,14 @@ const useStyles = makeStyles(theme => ({
         marginRight: theme.spacing(2)
     },
     title: {
-        [theme.breakpoints.down("xs")]: {
+        [theme.breakpoints.down('xs')]: {
             flexGrow: 1
         }
     },
     headerOptions: {
-        display: "flex",
+        display: 'flex',
         flex: 1,
-        justifyContent: "space-evenly"
+        justifyContent: 'space-evenly'
     }
 }));
 
@@ -36,7 +36,7 @@ const Navbar = props => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
     const handleMenu = event => {
         setAnchorEl(event.currentTarget);
@@ -52,47 +52,47 @@ const Navbar = props => {
     };
     const menuItems = [
         {
-            menuTitle: "Home",
-            pageURL: "/"
+            menuTitle: 'Home',
+            pageURL: '/'
         },
         {
-            menuTitle: "Admin",
-            pageURL: "/admin"
+            menuTitle: 'Admin',
+            pageURL: '/admin'
         },
         {
-            menuTitle: "Stats",
-            pageURL: "/stats"
+            menuTitle: 'Stats',
+            pageURL: '/stats'
         }
     ];
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position='static'>
                 <Toolbar>
-                    <Typography variant="h6" className={classes.title}>
+                    <Typography variant='h6' className={classes.title}>
                         Shop
               </Typography>
                     {isMobile ? (
                         <>
                             <IconButton
-                                edge="start"
+                                edge='start'
                                 className={classes.menuButton}
-                                color="inherit"
-                                aria-label="menu"
+                                color='inherit'
+                                aria-label='menu'
                                 onClick={handleMenu}
                             >
                                 <MenuIcon />
                             </IconButton>
                             <Menu
-                                id="menu-appbar"
+                                id='menu-appbar'
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right"
+                                    vertical: 'top',
+                                    horizontal: 'right'
                                 }}
                                 keepMounted
                                 transformOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right"
+                                    vertical: 'top',
+                                    horizontal: 'right'
                                 }}
                                 open={open}
                                 onClose={() => setAnchorEl(null)}
@@ -110,20 +110,20 @@ const Navbar = props => {
                     ) : (
                         <div className={classes.headerOptions}>
                             <Button
-                                variant="contained"
-                                onClick={() => handleButtonClick("/")}
+                                variant='contained'
+                                onClick={() => handleButtonClick('/')}
                             >
                                 HOME
                   </Button>
                             <Button
-                                variant="contained"
-                                onClick={() => handleButtonClick("/admin")}
+                                variant='contained'
+                                onClick={() => handleButtonClick('/admin')}
                             >
                                 ADMIN
                   </Button>
                             <Button
-                                variant="contained"
-                                onClick={() => handleButtonClick("/stats")}
+                                variant='contained'
+                                onClick={() => handleButtonClick('/stats')}
                             >
                                 STATS
                   </Button>

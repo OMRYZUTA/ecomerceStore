@@ -26,7 +26,7 @@ export default function SpacingGrid() {
 	return (
 		<Grid container className={classes.root} >
 			<Grid item xs={12}>
-				<Grid container justify="center" >
+				<Grid container justify='center' >
 					{[0, 1, 2].map((value) => (
 						<Grid key={value} item>
 							<Paper className={classes.paper} />
