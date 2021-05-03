@@ -14,7 +14,11 @@ export default function App() {
     <div className={classes.container}>
       <Navbar />
       <Switch>
-        <Route exact from="/" render={props => <Home {...props} />} />
+        <Route 
+          exact
+          from="/"
+          render={props => <Home {...props} />}
+        />
         <Route exact path="/home" render={props => <Home {...props} />} />
         <Route exact path="/admin" render={props => <Admin {...props} />} />
         <Route exact path="/stats" render={props => <Stats {...props} />} />
