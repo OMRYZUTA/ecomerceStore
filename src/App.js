@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar'
-import Admin from './pages/Admin';
+import Admin from './pages/Admin/Admin';
 import Home from './pages/home';
 import Stats from './pages/Stats';
 import { makeStyles } from '@material-ui/core/styles';
