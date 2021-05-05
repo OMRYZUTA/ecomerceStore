@@ -1,4 +1,6 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper';
@@ -9,41 +11,23 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { ModalStyled } from './style'
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const SMALL = '100'
 const LARGE = '170'
-
 const columns = [
   { id: 'title', label: 'Title' },
   { id: 'price', label: 'Price' },
-  { id: 'option', label: 'Option'}
+  { id: 'option', label: 'Option' }
 ];
 
-function createData(title, rawPrice) {
-  const price = '$' + rawPrice.toFixed(2)
-  return {
-    title, price
-  };
-}
 
-const rows = [
-  createData('shirt', 22.5),
-  createData('Pants', 24.5),
-  createData('Brush', 26.5),
-  createData('Mouse', 29),
-  createData('Computer', 2.5),
-  createData('Jeans', 26.9),
-  createData('Screen', 20),
-  createData('Chair', 12),
-  createData('Headphones', 12),
-  createData('Earpods', 5),
-  createData('Hat', 3.5),
-  createData('Egg', 2.5),
-  createData('Jam', 2.5),
-  createData('Ball', 25.5),
-  createData('Car', 28.5),
-];
 
 const useStyles = makeStyles({
   root: {
@@ -55,8 +39,24 @@ const useStyles = makeStyles({
 });
 
 export default function Admin() {
+  //http requests
+  const [items, setItems] = useState([]);
+
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const result = await axios(
+        'http://127.0.0.1:8000/items/',
+      );
+
+      setItems(result.data.results);
+    };
+
+    fetchItems();
+  }, []);
+
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleChangePage = (event, newPage) => {
@@ -67,9 +67,110 @@ export default function Admin() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const [open, setOpen] = useState(false);
 
+
+  const handleClose = () => {
+    setOpen(false);
+    setItemProps(initialItemState);
+  };
+
+  const initialItemState = {
+    price: null,
+    title: "",
+    description: "",
+    image: ""
+  };
+  // http requests
+  const postItem = (props) => {
+    if (props) {
+      console.log('post request got: ', props)
+      const postCallback = async () => {
+        const result = await axios({
+          method: 'post', url:
+            'http://127.0.0.1:8000/items/', data: props
+        }
+        );
+        setItems(...items, result.data);
+        console.log(items);
+      };
+
+      postCallback();
+      console.log('posting item');
+      setItemProps(initialItemState);
+    }
+  }
+  const putItem = (props) => {
+    if (props) {
+      console.log('put request got: ', props)
+      const putCallback = async () => {
+        const result = await axios({
+          method: 'put', url:
+            `http://127.0.0.1:8000/items/${props.id}`, data: props
+        }
+        );
+        setItems(...items, result.data);
+        console.log(items);
+      };
+
+      putCallback();
+      console.log('putting item');
+      setItemProps(initialItemState);
+    }
+  }
+
+
+  const [dispatch, setDispatch] = useState(props => {
+    postItem(props);
+  });
+
+  const [itemProps, setItemProps] = useState(initialItemState);
+
+
+  const handleChange = e => {
+    const name = e.target.id;
+    const value = e.target.value;
+    setItemProps(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+  const handleEditClick = rowID => {
+
+    for (const i in items) {
+      if (items[i].id === rowID) {
+        setItemProps(items[i]);
+      }
+    }
+    setDialogTitle('Edit');
+    setDispatch(() => { return () => putItem; })
+    console.log('dispatch', dispatch);
+    setOpen(true);
+  }
+  const handleAddClick = () => {
+    setDialogTitle('Add');
+    setOpen(true);
+    setDispatch(() => {
+      return (
+        () => {
+          postItem(itemProps);
+          setItemProps(initialItemState);
+          handleClose();
+        });
+    });
+    console.log('dispatch', dispatch);
+    if (dispatch) {
+      dispatch();
+    }
+  }
+
+
+  const [dialog_Title, setDialogTitle] = useState('Add');
   return (
     <Paper className={classes.root}>
+      <Button onClick={handleAddClick}>
+        Add
+     </Button>
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
@@ -86,31 +187,25 @@ export default function Admin() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+            {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.code}>
-                  {console.log('columns: ', columns) || columns.map((column) => {
-                    console.log('column: ', column)
-                    console.log('column.id: ', column.id)
-                    console.log('row: ', row)
+                <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
+                  {  columns.map((column) => {
                     const value = row[column.id];
-                    console.log('value: ', value)
-                    console.log('value: ', value)
-                    // row['option']
-                    // row['price']
-                    console.log('column.format: ', column.format)
                     return (
                       <TableCell key={column.id}>
-                        {column.id !== 'option'
+                        {(column.id !== 'option' && (column.id === 'price' || column.id === 'title'))
                           ? value
                           : <>
-                              <Button onClick={() => console.log('hi')}>
-                                Edit
+                            <Button onClick={() => {
+                              handleEditClick(row.id);
+                            }}>
+                              Edit
+                            </Button>
+                            <Button>
+                              Delete
                               </Button>
-                              <Button>
-                                Delete
-                              </Button>
-                            </>}
+                          </>}
                       </TableCell>
                     );
                   })}
@@ -123,15 +218,72 @@ export default function Admin() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component='div'
-        count={rows.length}
+        count={items.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-      <ModalStyled open>
-        <div>Modal</div>
-      </ModalStyled>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">{dialog_Title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please edit
+          </DialogContentText>
+          <TextField
+            value={itemProps.title}
+            autoFocus={true}
+            id="title"
+            margin="dense"
+            label="Title"
+            type="text"
+            fullWidth
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            value={itemProps.price}
+            id="price"
+            label="Price"
+            type="number"
+            fullWidth
+            onChange={handleChange}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
+          />
+          <TextField
+            margin="dense"
+            value={itemProps.description}
+            id="description"
+            label="Description"
+            type="text"
+            fullWidth
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            value={itemProps.image}
+            id="image"
+            label="ImageURL"
+            type="url"
+            fullWidth
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            postItem(itemProps);
+            setItemProps(initialItemState);
+            handleClose();
+          }} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
