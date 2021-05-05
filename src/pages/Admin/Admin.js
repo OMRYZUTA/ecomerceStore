@@ -18,6 +18,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import ItemService from './../../services/ItemService';
+import TableHeader from './TableHeader';
 
 const SMALL = '100'
 const LARGE = '170'
@@ -40,6 +42,7 @@ const useStyles = makeStyles({
 
 export default function Admin() {
   //http requests
+  const { putItem, postItem, deleteItem } = ItemService();
   const [items, setItems] = useState([]);
 
 
@@ -50,10 +53,10 @@ export default function Admin() {
       );
 
       setItems(result.data.results);
-    };
 
+    };
     fetchItems();
-  }, []);
+  });
 
   const classes = useStyles();
   const [page, setPage] = useState(0);
@@ -76,60 +79,14 @@ export default function Admin() {
   };
 
   const initialItemState = {
-    price: null,
+    price: "",
     title: "",
     description: "",
     image: ""
   };
-  // http requests
-  const postItem = (props) => {
-    if (props) {
-      console.log('post request got: ', props)
-      const postCallback = async () => {
-        await axios({
-          method: 'post', url:
-            'http://127.0.0.1:8000/items/', data: props
-        }
-        );
-        console.log(items);
-      };
 
-      postCallback();
-      console.log('posting item');
-      setItemProps(initialItemState);
-    }
-  }
-  const putItem = (props) => {
-    if (props) {
-      console.log('put request got: ', props)
-      const putCallback = async () => {
-        const result = await axios({
-          method: 'PUT', url:
-            `http://127.0.0.1:8000/items/${props.id}/`, data: props
-        }
-        );
-        console.log(result);
-      };
 
-      putCallback();
-    }
-  }
-  const deleteItem = (props) => {
-    if (props) {
-      console.log('delete request got: ', props)
-      const deleteCallback = async () => {
-        const result = await axios({
-          method: 'DELETE', url:
-            `http://127.0.0.1:8000/items/${props.id}/`, data: props
-        }
-        );
 
-        console.log(result);
-      };
-
-      deleteCallback();
-    }
-  }
 
 
   const [dispatch, setDispatch] = useState(props => {
@@ -137,7 +94,6 @@ export default function Admin() {
   });
 
   const [itemProps, setItemProps] = useState(initialItemState);
-
 
   const handleChange = e => {
     const name = e.target.id;
@@ -149,7 +105,6 @@ export default function Admin() {
   };
 
   const handleEditClick = rowID => {
-
     for (const i in items) {
       if (items[i].id === rowID) {
         setItemProps(items[i]);
@@ -167,7 +122,6 @@ export default function Admin() {
     setOpen(true);
   }
   const handleAddClick = () => {
-    console.log('in add')
     setDialogTitle('Add');
     setOpen(true);
     setDispatch(() => {
@@ -178,19 +132,18 @@ export default function Admin() {
         });
     });
     console.log('dispatch', dispatch);
-
   }
 
   const handleDeleteClick = rowID => {
-    console.log('rowID',rowID);
+    console.log('rowID', rowID);
     for (const i in items) {
       if (items[i].id === rowID) {
         deleteItem(items[i]);
       }
     }
   }
-
   const [dialog_Title, setDialogTitle] = useState('Add');
+
   return (
     <Paper className={classes.root}>
       <Button onClick={handleAddClick}>
@@ -198,19 +151,7 @@ export default function Admin() {
      </Button>
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label='sticky table'>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.label === 'Price' ? SMALL : LARGE }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
+          <TableHeader />
           <TableBody>
             {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (

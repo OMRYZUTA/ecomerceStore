@@ -1,33 +1,43 @@
-import http from "../http-common";
+import axios from 'axios';
 
-class itemService {
-    getAll() {
-        return http.get("/items");
+const ItemService = () => {
+    const putItem = (props) => {
+        if (props) {
+            console.log('put request got: ', props)
+            const putCallback = async () => {
+                     await axios({
+                    method: 'PUT', url:
+                        `http://127.0.0.1:8000/items/${props.id}/`, data: props
+                });
+            };
+
+            putCallback();
+        }
     }
-
-    get(id) {
-        return http.get(`/items/${id}`);
+    const postItem = (props) => {
+        if (props) {
+            const postCallback = async () => {
+                await axios({
+                    method: 'post', url:
+                        'http://127.0.0.1:8000/items/', data: props
+                }
+                );
+            };
+            postCallback();
+        }
     }
-
-    create(data) {
-        return http.post("/items", data);
-    }
-
-    update(id, data) {
-        return http.put(`/items/${id}`, data);
-    }
-
-    delete(id) {
-        return http.delete(`/items/${id}`);
-    }
-
-    deleteAll() {
-        return http.delete(`/items`);
-    }
-
-    findByTitle(title) {
-        return http.get(`/items?title=${title}`);
-    }
-}
-
-export default new itemService();
+    const deleteItem = (props) => {
+        if (props) {
+          const deleteCallback = async () => {
+                await axios({
+                    method: 'DELETE', url:
+                    `http://127.0.0.1:8000/items/${props.id}/`, data: props
+            });
+          };
+    
+          deleteCallback();
+        }
+      }
+    return { putItem, postItem, deleteItem };
+};
+export default ItemService;
