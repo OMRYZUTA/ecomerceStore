@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper';
@@ -8,7 +7,6 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
@@ -21,8 +19,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import ItemService from './../../services/ItemService';
 import TableHeader from './TableHeader';
 
-const SMALL = '100'
-const LARGE = '170'
 const columns = [
   { id: 'title', label: 'Title' },
   { id: 'price', label: 'Price' },
@@ -42,21 +38,13 @@ const useStyles = makeStyles({
 
 export default function Admin() {
   //http requests
-  const { putItem, postItem, deleteItem } = ItemService();
+  const { putItem, postItem, deleteItem, allItems } = ItemService();
   const [items, setItems] = useState([]);
 
 
   useEffect(() => {
-    const fetchItems = async () => {
-      const result = await axios(
-        'http://127.0.0.1:8000/items/',
-      );
-
-      setItems(result.data.results);
-
-    };
-    fetchItems();
-  });
+    setItems(allItems)
+  }, [allItems]);
 
   const classes = useStyles();
   const [page, setPage] = useState(0);

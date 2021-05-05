@@ -1,11 +1,12 @@
 import axios from 'axios';
+import GetAllItems from './GetAllItems'
 
 const ItemService = () => {
     const putItem = (props) => {
         if (props) {
             console.log('put request got: ', props)
             const putCallback = async () => {
-                     await axios({
+                await axios({
                     method: 'PUT', url:
                         `http://127.0.0.1:8000/items/${props.id}/`, data: props
                 });
@@ -28,16 +29,17 @@ const ItemService = () => {
     }
     const deleteItem = (props) => {
         if (props) {
-          const deleteCallback = async () => {
+            const deleteCallback = async () => {
                 await axios({
                     method: 'DELETE', url:
-                    `http://127.0.0.1:8000/items/${props.id}/`, data: props
-            });
-          };
-    
-          deleteCallback();
+                        `http://127.0.0.1:8000/items/${props.id}/`, data: props
+                });
+            };
+
+            deleteCallback();
         }
-      }
-    return { putItem, postItem, deleteItem };
+    }
+    const allItems = GetAllItems();
+    return { putItem, postItem, deleteItem, allItems };
 };
 export default ItemService;
