@@ -86,12 +86,11 @@ export default function Admin() {
     if (props) {
       console.log('post request got: ', props)
       const postCallback = async () => {
-        const result = await axios({
+        await axios({
           method: 'post', url:
             'http://127.0.0.1:8000/items/', data: props
         }
         );
-        setItems(...items, result.data);
         console.log(items);
       };
 
@@ -105,17 +104,30 @@ export default function Admin() {
       console.log('put request got: ', props)
       const putCallback = async () => {
         const result = await axios({
-          method: 'put', url:
-            `http://127.0.0.1:8000/items/${props.id}`, data: props
+          method: 'PUT', url:
+            `http://127.0.0.1:8000/items/${props.id}/`, data: props
         }
         );
-        setItems(...items, result.data);
-        console.log(items);
+        console.log(result);
       };
 
       putCallback();
-      console.log('putting item');
-      setItemProps(initialItemState);
+    }
+  }
+  const deleteItem = (props) => {
+    if (props) {
+      console.log('delete request got: ', props)
+      const deleteCallback = async () => {
+        const result = await axios({
+          method: 'DELETE', url:
+            `http://127.0.0.1:8000/items/${props.id}/`, data: props
+        }
+        );
+
+        console.log(result);
+      };
+
+      deleteCallback();
     }
   }
 
@@ -135,6 +147,7 @@ export default function Admin() {
       [name]: value
     }));
   };
+
   const handleEditClick = rowID => {
 
     for (const i in items) {
@@ -143,27 +156,41 @@ export default function Admin() {
       }
     }
     setDialogTitle('Edit');
-    setDispatch(() => { return () => putItem; })
-    console.log('dispatch', dispatch);
-    setOpen(true);
-  }
-  const handleAddClick = () => {
-    setDialogTitle('Add');
-    setOpen(true);
     setDispatch(() => {
       return (
-        () => {
-          postItem(itemProps);
-          setItemProps(initialItemState);
+        props => {
+          putItem(props);
           handleClose();
         });
     });
     console.log('dispatch', dispatch);
-    if (dispatch) {
-      dispatch();
-    }
+    setOpen(true);
+  }
+  const handleAddClick = () => {
+    console.log('in add')
+    setDialogTitle('Add');
+    setOpen(true);
+    setDispatch(() => {
+      return (
+        props => {
+          postItem(props);
+          handleClose();
+        });
+    });
+    console.log('dispatch', dispatch);
+
   }
 
+  const handleDeleteClick = rowID => {
+
+    for (const i in items) {
+      if (items[i].id === rowID) {
+        setItemProps(items[i]);
+      }
+    }
+    console.log('itemProps:', itemProps);
+    deleteItem(itemProps)
+  }
 
   const [dialog_Title, setDialogTitle] = useState('Add');
   return (
@@ -202,7 +229,7 @@ export default function Admin() {
                             }}>
                               Edit
                             </Button>
-                            <Button>
+                            <Button ocClick={handleDeleteClick}>
                               Delete
                               </Button>
                           </>}
@@ -276,9 +303,7 @@ export default function Admin() {
             Cancel
           </Button>
           <Button onClick={() => {
-            postItem(itemProps);
-            setItemProps(initialItemState);
-            handleClose();
+            dispatch(itemProps);
           }} color="primary">
             Submit
           </Button>
