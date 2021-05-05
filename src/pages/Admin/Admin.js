@@ -182,14 +182,12 @@ export default function Admin() {
   }
 
   const handleDeleteClick = rowID => {
-
+    console.log('rowID',rowID);
     for (const i in items) {
       if (items[i].id === rowID) {
-        setItemProps(items[i]);
+        deleteItem(items[i]);
       }
     }
-    console.log('itemProps:', itemProps);
-    deleteItem(itemProps)
   }
 
   const [dialog_Title, setDialogTitle] = useState('Add');
@@ -229,7 +227,9 @@ export default function Admin() {
                             }}>
                               Edit
                             </Button>
-                            <Button ocClick={handleDeleteClick}>
+                            <Button onClick={() => {
+                              handleDeleteClick(row.id);
+                            }}>
                               Delete
                               </Button>
                           </>}
