@@ -55,7 +55,7 @@ const ProductSummary = ({ summarizedItems, handlePay }) => {
                         Total
                     </Box>
                     <Box display="flex" align='end'>
-                        {sum === null ? 'loading..' : sum}
+                        ${sum === null ? 'loading..' : sum}
                     </Box>
                 </Grid>
             </CardContent>

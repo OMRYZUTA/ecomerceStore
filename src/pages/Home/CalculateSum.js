@@ -4,7 +4,7 @@ const useCalculateSum = (summarizedItems) => {
     const [sum, setSum] = useState(0);
     useEffect(() => {
         Object.keys(summarizedItems).forEach(key => {
-            setSum(sum + summarizedItems[key].price * summarizedItems[key].quantity);
+            setSum(sum + summarizedItems[key].price);
         }
         )
     }, [summarizedItems]);

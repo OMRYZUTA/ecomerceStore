@@ -7,7 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Popper from '@material-ui/core/Popper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import ProductSummary from './ProductSummary'
+import OrderService from '../../services/OrderService';
+import ProductSummary from './ProductSummary';
+
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -23,6 +25,7 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
     const handleClick = (event) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
+    const postOrder = OrderService();
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
@@ -59,7 +62,10 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
             <Popper id={id} open={open} anchorEl={anchorEl}>
                 <Paper>{Object.keys(summarizedItems).length > 0 ? <ProductSummary summarizedItems={summarizedItems} handlePay={() => {
                     console.log(chosenItems);
-                    console.log(`postOrder(${Object.keys(summarizedItems)})`);
+                    Object.keys(summarizedItems).forEach(item => {
+                        console.log(postOrder);
+                        console.log('sending this', { "quantity": summarizedItems[item].quantity, "item": summarizedItems[item].url },);
+                    });
                     handlePay();
                     setSummarizedItems({})
                 }} /> : ''}
