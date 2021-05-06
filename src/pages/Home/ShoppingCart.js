@@ -33,7 +33,7 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
             chosenItems.map((item) => {
                 const title = item.title;
                 const price = item.price;
-                const id = item.id;
+                const url = item.url;
                 const summrizedTitles = Object.keys(summarizedItems);
                 if (summrizedTitles.includes(title)) {
                     const quantity = summarizedItems[title].quantity + 1;
@@ -43,7 +43,7 @@ const ShoppingCart = ({ chosenItems, handlePay }) => {
                     setSummarizedItems({ ...summarizedItems, [title]: tempObject })
                 }
                 else {
-                    setSummarizedItems({ ...summarizedItems, [title]: { 'id': id, 'title': title, 'quantity': 1, 'price': price } })
+                    setSummarizedItems({ ...summarizedItems, [title]: { 'url': url, 'title': title, 'quantity': 1, 'price': price } })
                 }
             });
         }

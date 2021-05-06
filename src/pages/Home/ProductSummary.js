@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import useCalculateSum from './CalculateSum'
+
 const useStyles = makeStyles({
     root: {
         minWidth: 275,
@@ -27,6 +29,7 @@ const useStyles = makeStyles({
 const ProductSummary = ({ summarizedItems, handlePay }) => {
     const classes = useStyles();
     console.log('summarizedItems  =', summarizedItems);
+    const sum = useCalculateSum(summarizedItems);
 
     return (
         <Card className={classes.root} variant="outlined">
@@ -47,6 +50,14 @@ const ProductSummary = ({ summarizedItems, handlePay }) => {
 
                     )
                 })}
+                <Grid container justify='space-between' display="flex">
+                    <Box display="flex" align='start'>
+                        Total
+                    </Box>
+                    <Box display="flex" align='end'>
+                        {sum === null ? 'loading..' : sum}
+                    </Box>
+                </Grid>
             </CardContent>
             <CardActions onClick={
                 handlePay
