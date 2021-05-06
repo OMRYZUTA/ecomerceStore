@@ -14,13 +14,20 @@ import ShoppingCart from './ShoppingCart';
 const Index = () => {
 	const items = Items();
 	const [chosenItems, setChosenItems] = useState([]);
+	const handleBuyClick = chosenItem => {
+		setChosenItems([...chosenItems, chosenItem]);
+	}
+	const handlePay = () => {
+		setChosenItems([]);
+	}
+
 	return (
 		<Container>
-			<ShoppingCart chosenItems={chosenItems}/>
+			<ShoppingCart chosenItems={chosenItems} handlePay={handlePay} />
 			<Grid container>
 				{items.map(item => (
 					<Grid item key={item.id} xs={12} sm={6} md={3}>
-						<ProductCard item={item} />
+						<ProductCard item={item} handleBuyClick={handleBuyClick} />
 					</Grid>
 				))}
 			</Grid>

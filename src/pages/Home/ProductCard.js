@@ -16,7 +16,7 @@ const useStyles = makeStyles({
         height: 140,
     },
 });
-const ProductCard = ({ item }) => {
+const ProductCard = ({ item, handleBuyClick, }) => {
     const classes = useStyles();
     return (
         <Card className={classes.root}>
@@ -40,7 +40,7 @@ const ProductCard = ({ item }) => {
                 </CardContent>
             </CardActionArea>
             <CardActions>
-                <Button size="small" color="primary">
+                <Button size="small" color="primary" onClick={() => { handleBuyClick(item) }}>
                     Buy
         </Button>
             </CardActions>

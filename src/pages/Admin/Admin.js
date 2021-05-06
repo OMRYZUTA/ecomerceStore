@@ -119,7 +119,6 @@ export default function Admin() {
           handleClose();
         });
     });
-    console.log('dispatch', dispatch);
   }
 
   const handleDeleteClick = rowID => {
