@@ -1,4 +1,16 @@
 from django.db import models
+from django.db import connection
+
+class Top5Items(object):
+
+    def getTop5items():
+        queryset = None
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT backend_item.title FROM backend_item WHERE backend_item.id IN (SELECT backend_orderitem.item_id FROM backend_orderitem GROUP BY backend_orderitem.item_id ORDER BY COUNT(backend_orderitem.quantity) DESC) LIMIT 5')
+            queryset = cursor.fetchall()
+            queryset = list(map(lambda x: x[0], queryset))
+
+        return queryset
 
 
 class Item(models.Model):

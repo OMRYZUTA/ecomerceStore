@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Item, OrderItem, Order
+from django.db.models import Sum
 
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
