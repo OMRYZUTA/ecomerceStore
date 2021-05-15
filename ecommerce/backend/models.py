@@ -1,14 +1,35 @@
 from django.db import models
 from django.db import connection
 
+
 class Top5Items(object):
+    def getOrdersFromPast5Days():
+        queryset = None
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT backend_order.ordered_date, backend_item.price * backend_orderitem.quantity AS total FROM backend_order JOIN backend_order_items ON backend_order.id = backend_order_items.order_id  JOIN backend_orderitem ON backend_order_items.orderitem_id = backend_orderitem.id JOIN backend_item ON backend_item.id = backend_orderitem.item_id WHERE backend_order.ordered_date > (SELECT DATETIME("now", "-6 day")) GROUP BY  backend_order.id')
+            queryset = cursor.fetchall()
+            queryset = [{'order': sub[0], 'date': sub[1]}
+                        for sub in queryset]
+
+        return queryset
+
+    def getTop5UniqueSel():
+        queryset = None
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT backend_item.title, COUNT(*) FROM backend_item JOIN backend_orderitem ON backend_item.id = backend_orderitem.item_id GROUP BY backend_orderitem.item_id ORDER BY COUNT(*) DESC LIMIT 5')
+            queryset = cursor.fetchall()
+            queryset = [{'item': sub[0], 'quantity': sub[1]}
+                        for sub in queryset]
+
+        return queryset
 
     def getTop5items():
         queryset = None
         with connection.cursor() as cursor:
-            cursor.execute('SELECT backend_item.title FROM backend_item WHERE backend_item.id IN (SELECT backend_orderitem.item_id FROM backend_orderitem GROUP BY backend_orderitem.item_id ORDER BY COUNT(backend_orderitem.quantity) DESC) LIMIT 5')
+            cursor.execute('SELECT backend_item.title ,SUM(backend_orderitem.quantity) FROM backend_item JOIN backend_orderitem ON backend_item.id = backend_orderitem.item_id GROUP BY backend_orderitem.item_id ORDER BY SUM(backend_orderitem.quantity) DESC LIMIT 5')
             queryset = cursor.fetchall()
-            queryset = list(map(lambda x: x[0], queryset))
+            queryset = [{'item': sub[0], 'quantity': sub[1]}
+                        for sub in queryset]
 
         return queryset
 

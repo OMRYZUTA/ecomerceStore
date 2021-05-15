@@ -6,7 +6,11 @@ from django.db import connection
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-
+class Last5DaysAPIView(APIView):
+    def get(self, request, *args, **kw):
+        result = Top5Items.getOrdersFromPast5Days()
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
 
 class Top5APIView(APIView):
     def get(self, request, *args, **kw):
@@ -14,6 +18,11 @@ class Top5APIView(APIView):
         response = Response(result, status=status.HTTP_200_OK)
         return response
 
+class Top5UniqueSelAPIView(APIView):
+    def get(self, request, *args, **kw):
+        result = Top5Items.getTop5UniqueSel()
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
